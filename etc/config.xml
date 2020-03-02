@@ -3,13 +3,12 @@
         <carriers>
             <customshipping>
                 <active>0</active>
-                <title>R+L Carriers</title>
-                <name>R+L Carriers</name>
+                <title>HHsolution Shipping Title</title>
+                <name>HHsolution Shipping Method Name</name>
                 <shipping_cost>10</shipping_cost>
                 <sallowspecific>0</sallowspecific>
-                <sort_order></sort_order>
-                <model>HHsolution\CustomShipping\Model\Carrier\Rlcarriers</model>
-                <specificerrmsg>This shipping method is for R+L 1.0.3.</specificerrmsg>
+                <sort_order>15</sort_order>
+                <model>HHsolution\Rlcarriers\Model\Carrier\Customshipping</model>
             </customshipping>
         </carriers>
     </default>

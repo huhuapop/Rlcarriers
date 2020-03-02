@@ -1,6 +1,6 @@
 {
-  "name": "hhsolution/custom-shipping",
-  "description": "HHsolution module for R+L Carriers Freight Shipping",
+  "name": "hhsolution/rlcarriers",
+  "description": "HHsolution Rlcarriers shipping module",
   "type": "magento2-module",
   "version": "1.0.1",
   "license": [
@@ -13,7 +13,7 @@
   "autoload": {
     "files": [ "registration.php" ],
     "psr-4": {
-      "Vendor\\CustomShipping\\": ""
+      "HHsolution\\Rlcarriers\\": ""
     }
   }
 }

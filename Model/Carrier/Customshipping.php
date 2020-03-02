@@ -1,6 +1,6 @@
 <?php
 
-namespace HHsolution\CustomShipping\Model\Carrier;
+namespace HHsolution\Rlcarriers\Model\Carrier;
 
 use Magento\Quote\Model\Quote\Address\RateRequest;
 use Magento\Shipping\Model\Carrier\AbstractCarrier;
@@ -9,7 +9,7 @@ use Magento\Shipping\Model\Carrier\CarrierInterface;
 /**
  * Custom shipping model
  */
-class Rlcarriers extends AbstractCarrier implements CarrierInterface
+class Customshipping extends AbstractCarrier implements CarrierInterface
 {
     /**
      * @var string
