@@ -10,7 +10,7 @@
                 <sallowspecific>0</sallowspecific>
                 <sort_order>15</sort_order>
                 <model>HHsolution\Rlcarriers\Model\Carrier\Rlcarriers</model>
-                <specificerrmsg>This shipping method is for RL carrier 1.0.3.</specificerrmsg>
+                <specificerrmsg>This shipping method is for RL carrier 1.0.1.</specificerrmsg>
             </rlcarriers>
         </carriers>
     </default>
