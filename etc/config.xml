@@ -6,7 +6,7 @@
                 <active>0</active>
                 <title>R+L Carriers</title>
                 <name>R+L Carriers</name>
-                <shipping_cost>10</shipping_cost>
+                <shipclass>50</shipclass>
                 <sallowspecific>0</sallowspecific>
                 <sort_order>15</sort_order>
                 <model>HHsolution\Rlcarriers\Model\Carrier\Rlcarriers</model>

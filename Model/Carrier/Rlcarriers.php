@@ -2,96 +2,141 @@
 
 namespace HHsolution\Rlcarriers\Model\Carrier;
 
-use Magento\Quote\Model\Quote\Address\RateRequest;
-use Magento\Shipping\Model\Carrier\AbstractCarrier;
-use Magento\Shipping\Model\Carrier\CarrierInterface;
+use HHsolution\Rlcarriers\Model\Carrier;
 
-/**
- * Custom shipping model
- */
-class Rlcarriers extends AbstractCarrier implements CarrierInterface
+class Rlcarriers extends AbstractCarrierModel
 {
+
     /**
+     * Carrier's code
+     *
      * @var string
      */
     protected $_code = 'rlcarriers';
 
     /**
-     * @var bool
-     */
-    protected $_isFixed = true;
-
-    /**
-     * @var \Magento\Shipping\Model\Rate\ResultFactory
-     */
-    private $rateResultFactory;
-
-    /**
-     * @var \Magento\Quote\Model\Quote\Address\RateResult\MethodFactory
-     */
-    private $rateMethodFactory;
-
-    /**
-     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-     * @param \Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory $rateErrorFactory
-     * @param \Psr\Log\LoggerInterface $logger
-     * @param \Magento\Shipping\Model\Rate\ResultFactory $rateResultFactory
-     * @param \Magento\Quote\Model\Quote\Address\RateResult\MethodFactory $rateMethodFactory
-     * @param array $data
-     */
-    public function __construct(
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory $rateErrorFactory,
-        \Psr\Log\LoggerInterface $logger,
-        \Magento\Shipping\Model\Rate\ResultFactory $rateResultFactory,
-        \Magento\Quote\Model\Quote\Address\RateResult\MethodFactory $rateMethodFactory,
-        array $data = []
-    ) {
-        parent::__construct($scopeConfig, $rateErrorFactory, $logger, $data);
-
-        $this->rateResultFactory = $rateResultFactory;
-        $this->rateMethodFactory = $rateMethodFactory;
-    }
-
-    /**
-     * Custom Shipping Rates Collector
+     * Fields that should be replaced in debug with '***'
      *
-     * @param RateRequest $request
-     * @return \Magento\Shipping\Model\Rate\Result|bool
+     * @var array
      */
-    public function collectRates(RateRequest $request)
+    protected $_debugReplacePrivateDataKeys = ['APIKey'];
+
+    /**
+     * Request Quote URL
+     */
+    protected $_requestQuoteUrl = 'http://api.rlcarriers.com/1.0.3/RateQuoteService.asmx?WSDL';
+    protected $_apiKey = null;
+    protected $_debugData = [];
+
+    public function collectFreightRate()
     {
-        if (!$this->getConfigFlag('active')) {
+        $request = $this->buildRequest();
+        $this->_debugData['request'] = $request;
+        try {
+            $rates = $this->postRequest($request);
+        } catch (\Exception $e) {
             return false;
         }
-
-        /** @var \Magento\Shipping\Model\Rate\Result $result */
-        $result = $this->rateResultFactory->create();
-
-        /** @var \Magento\Quote\Model\Quote\Address\RateResult\Method $method */
-        $method = $this->rateMethodFactory->create();
-
-        $method->setCarrier($this->_code);
-        $method->setCarrierTitle($this->getConfigData('title'));
-
-        $method->setMethod($this->_code);
-        $method->setMethodTitle($this->getConfigData('name'));
-
-        $shippingCost = (float)$this->getConfigData('shipping_cost');
-
-        $method->setPrice($shippingCost);
-        $method->setCost($shippingCost);
-
-        $result->append($method);
-
-        return $result;
+        return $rates;
     }
 
-    /**
-     * @return array
-     */
-    public function getAllowedMethods()
+    public function buildRequest()
     {
-        return [$this->_code => $this->getConfigData('name')];
+        $_originZip = $this->_dataHelper->getOriginPostcode();
+        $_defaultShipClass = $this->_dataHelper->getShipclass();
+
+        $this->_apiKey = $this->_dataHelper->decrypt($this->getConfigData('apikey'));
+
+        if (!$this->_apiKey) {
+            return false;
+        }
+        $request["APIKey"] = $this->_apiKey;
+        $request["QuoteType"] = "Domestic";
+        $request["CODAmount"] = "0";
+
+        $request["Origin"] = [
+            "City" => "",
+            "StateOrProvince" => "",
+            "ZipOrPostalCode" => trim($_originZip),
+            "CountryCode" => $this->_dataHelper->getCountryISO3Code($this->_dataHelper->getOriginCountry())
+        ];
+
+        $request["Destination"] = [
+            "City" => "",
+            "StateOrProvince" => "",
+            "ZipOrPostalCode" => trim($this->_request->getDestPostcode()),
+            "CountryCode" => $this->_dataHelper->getCountryISO3Code($this->_request->getDestCountryId()),
+        ];
+        $request["DeclaredValue"] = 0;
+
+        $request["OverDimensionPcs"] = 0;
+
+        $items = [];
+        $cn = 0;
+        foreach ($this->getItems() as $item) {
+            $items[$cn]['Class'] = (float) ($this->_dataHelper->getShipclass());
+            $items[$cn]['Weight'] = (float) ceil($item->getProduct()->getWeight() * $item->getQty());
+            $items[$cn]['Height'] = (float) $item->getProduct()->getFreightWidth();
+            $items[$cn]['Width'] = (float) $item->getProduct()->getFreightHeight();
+            $items[$cn]['Length'] = (float) $item->getProduct()->getFreightLength();
+        }
+
+        $request["Accessorials"] = [];
+
+        $request["Items"] = $items;
+
+        return $request;
+    }
+
+    public function postRequest($request)
+    {
+        try {
+            $client = new \Zend\Soap\Client($this->_requestQuoteUrl);
+            $this->_debugData['request'] = $request;
+            $response = $client->GetRateQuote(["APIKey" => $this->_apiKey, "request" => $request]);
+            $this->_debugData['result'] = $response;
+            $_results = $this->parseXmlResponse($response);
+        } catch (\Exception $e) {
+            $this->_debugData['result'] = $e->getMessage();
+            return false;
+        }
+        $this->debugRlcData($this->_debugData);
+        return $_results;
+    }
+
+    public function parseXmlResponse($response)
+    {
+        $_rates = [];
+        try {
+            $_result = $response->GetRateQuoteResult->Result;
+            $_rlcRates = $_result->ServiceLevels->ServiceLevel;
+        } catch (\Exception $e) {
+            return $_rates;
+        }
+        $_allowdMethods = $this->getConfigData('allowed_methods_rl');
+        if (is_array($_rlcRates)) {
+            $_methods = explode(',', $_allowdMethods);
+            foreach ($_rlcRates as $_rlcRate) {
+                if (!in_array($_rlcRate->Code, $_methods)) {
+                    continue;
+                }
+                $_rate = preg_replace('/[^0-9.]* /', '', str_replace('$', '', $_rlcRate->NetCharge));
+                $_rates[] = [
+                    'rate'      => $_rate,
+                    'method'    => $_rlcRate->Title,
+                    'code'      => $_rlcRate->Code,
+                    'carrier'   => $this->_code
+                ];
+            }
+        } else {
+            $_rate = preg_replace('/[^0-9.]*/', '', str_replace('$', '', $_result->ServiceLevels->ServiceLevel->NetCharge));
+            $_rates[] = [
+                'rate'      => $_rate,
+                'carrier'   => $this->_code,
+                'method'    => $_result->ServiceLevels->ServiceLevel->Title,
+                'code'      => $_result->ServiceLevels->ServiceLevel->Code
+            ];
+        }
+        return $_rates;
     }
 }
