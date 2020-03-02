@@ -1,15 +1,15 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
     <default>
         <carriers>
-            <customshipping>
+            <rlcarriers>
                 <active>0</active>
                 <title>HHsolution Shipping Title</title>
                 <name>HHsolution Shipping Method Name</name>
                 <shipping_cost>10</shipping_cost>
                 <sallowspecific>0</sallowspecific>
                 <sort_order>15</sort_order>
-                <model>HHsolution\Rlcarriers\Model\Carrier\Customshipping</model>
-            </customshipping>
+                <model>HHsolution\Rlcarriers\Model\Carrier\Rlcarriers</model>
+            </rlcarriers>
         </carriers>
     </default>
 </config>
