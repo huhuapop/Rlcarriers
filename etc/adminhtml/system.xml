@@ -18,6 +18,14 @@
                     <label>API Key</label>
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                 </field>
+                <field id="allowed_methods_rl" translate="label" type="multiselect" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Allowed Methods</label>
+                    <source_model>HHsolution\Rlcarriers\Model\System\Config\Source\Allowmethods</source_model>
+                </field>
+                <field id="shipclass" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Ship Class</label>
+                    <source_model>HHsolution\Rlcarriers\Model\System\Config\Source\Shipclass</source_model>
+                </field>
                 <field id="handlingfee_type" translate="label" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Calculate Handling Fee</label>
                     <source_model>Magento\Shipping\Model\Source\HandlingType</source_model>
