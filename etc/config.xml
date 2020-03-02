@@ -2,13 +2,15 @@
     <default>
         <carriers>
             <rlcarriers>
+                <enable>0</enable>
                 <active>0</active>
-                <title>HHsolution Shipping Title</title>
-                <name>HHsolution Shipping Method Name</name>
+                <title>R+L Carriers</title>
+                <name>R+L Carriers</name>
                 <shipping_cost>10</shipping_cost>
                 <sallowspecific>0</sallowspecific>
                 <sort_order>15</sort_order>
                 <model>HHsolution\Rlcarriers\Model\Carrier\Rlcarriers</model>
+                <specificerrmsg>This shipping method is for RL carrier 1.0.3.</specificerrmsg>
             </rlcarriers>
         </carriers>
     </default>

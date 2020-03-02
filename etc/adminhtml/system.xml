@@ -3,7 +3,7 @@
     <system>
         <section id="carriers" translate="label" type="text" sortOrder="320" showInDefault="1" showInWebsite="1" showInStore="1">
             <group id="rlcarriers" translate="label" type="text" sortOrder="900" showInDefault="1" showInWebsite="1" showInStore="1">
-                <label>HHsolution Shipping Module</label>
+                <label>HHsolution R+L Carriers</label>
                 <field id="active" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
                     <label>Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
@@ -13,6 +13,30 @@
                 </field>
                 <field id="name" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Method Name</label>
+                </field>
+                <field id="apikey" translate="label" type="obscure" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>API Key</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                </field>
+                <field id="handlingfee_type" translate="label" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Calculate Handling Fee</label>
+                    <source_model>Magento\Shipping\Model\Source\HandlingType</source_model>
+                </field>
+                <field id="handlingfee" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Handling Fee</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="min_freight" translate="label" type="text" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Minimum Freight Charge</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="min_weight" translate="label" type="text" sortOrder="150" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Minimum Package Weight</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="max_weight" translate="label" type="text" sortOrder="160" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Maximum Package Weight</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
                 </field>
                 <field id="shipping_cost" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0" >
                     <label>Shipping Cost</label>
@@ -33,8 +57,15 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <frontend_class>shipping-skip-hide</frontend_class>
                 </field>
+                <field id="debug" translate="label" type="select" sortOrder="187" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Debug</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
                 <field id="sort_order" translate="label" type="text" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Sort Order</label>
+                </field>
+                <field id="specificerrmsg" translate="label" type="textarea" sortOrder="190" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Displayed Error Message</label>
                 </field>
             </group>
         </section>
