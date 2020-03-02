@@ -9,12 +9,12 @@ use Magento\Shipping\Model\Carrier\CarrierInterface;
 /**
  * Custom shipping model
  */
-class Customshipping extends AbstractCarrier implements CarrierInterface
+class Rlcarriers extends AbstractCarrier implements CarrierInterface
 {
     /**
      * @var string
      */
-    protected $_code = 'customshipping';
+    protected $_code = 'rlcarriers';
 
     /**
      * @var bool
